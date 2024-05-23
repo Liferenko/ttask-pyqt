@@ -1,0 +1,10 @@
+[project]
+authors = [
+  {name = "Paul Liferenko", email = "liferenko.it@gmail.com"},
+]
+readme = "README.md"
+dependencies = [
+  "PyQt5",
+  "black",
+  "flake8",
+]
