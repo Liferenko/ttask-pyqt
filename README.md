@@ -58,16 +58,16 @@
 
 ### Todo:
 
-- [ ] **Initialize the PyQt Application**
-  - [ ] Set up the main window with an empty scene.
+- [x] **Initialize the PyQt Application**
+  - [x] Set up the main window with an empty scene.
   
-- [ ] **Handle Double-Click Events**
-  - [ ] Detect double-click on the scene.
-  - [ ] Add a rectangle at the double-click location with a random color.
+- [x] **Handle Double-Click Events**
+  - [x] Detect double-click on the scene.
+  - [x] Add a rectangle at the double-click location with a random color.
   
-- [ ] **Implement Rectangle Properties**
-  - [ ] Define constant size for rectangles with a 2:1 aspect ratio.
-  - [ ] Ensure rectangles are created centered at the click point.
+- [x] **Implement Rectangle Properties**
+  - [x] Define constant size for rectangles with a 2:1 aspect ratio.
+  - [x] Ensure rectangles are created centered at the click point.
   
 - [ ] **Collision Management**
   - [ ] Prevent rectangles from overlapping during creation and dragging.
