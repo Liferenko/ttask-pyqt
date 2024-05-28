@@ -20,6 +20,7 @@ colors = [
     "white",
 ]
 
+
 class RectangleItem(QGraphicsRectItem):
     def __init__(self):
         super().__init__()
@@ -54,7 +55,7 @@ class RectangleItem(QGraphicsRectItem):
                     new_pos.setY(max(new_pos.y(), rect.rect.top() - self.rect.height()))
                     new_pos.setY(min(new_pos.y(), rect.rect.bottom()))
 
-                    print(f'new position - #{new_pos}')
+                    print(f"new position - #{new_pos}")
         # Collisions with Scene boundaries
         borders = Scene().rect()
 
@@ -103,12 +104,11 @@ class Scene(QWidget):
         new_rect_item.setPos(event.screenPos())
 
         print(self.rect_items)
-        #self.addItem(rect_item)
+        # self.addItem(rect_item)
         self.rect_items.append(new_rect_item)
 
         # return super().mouseDoubleClickEvent(event)
         print("Sup doubleclick")
-
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
         for rect_item in self.rect_items:
