@@ -1,24 +1,46 @@
-import sys
 import random
 import pdb
 
-from PyQt5.QtWidgets import (
-    QApplication,
-    QGraphicsScene,
-    QGraphicsView,
-    QGraphicsRectItem,
-)
-from PyQt5.QtGui import QBrush, QTransform, QColor
-from PyQt5.QtCore import Qt, QLineF
+from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5.QtGui import QPainter, QColor, QBrush
+from PyQt5.QtCore import Qt, QRect, QPoint
 
-# pdb.set_trace()
-
-
-class RectangleItem(QGraphicsRectItem):
+class Scene(QWidget):
     def __init__(self):
         super().__init__()
-        self.setRect(0, 0, 200, 100)
+        # TODO Create rectangles by click
+        self.rect_items = [RectangleItem(rect) for rect in rect_array]
+        self.setFixedSize(800, 500)
+        self.setMouseTracking(True)
+        self.show()
 
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+        for rect_item in self.rect_items:
+            rect_item.paint(painter)
+
+    def mousePressEvent(self, event):
+        for rect_item in self.rect_items:
+            if rect_item.rect.contains(event.pos()):
+                rect_item.mousePressEvent(event)
+
+    def mouseMoveEvent(self, event):
+        for rect_item in self.rect_items:
+            rect_item.mouseMoveEvent(event)
+        self.update()
+
+    def mouseReleaseEvent(self, event):
+        for rect_item in self.rect_items:
+            rect_item.mouseReleaseEvent(event)
+
+class RectangleItem:
+    def __init__(self, rect):
+        self.rect = rect
+        self.mouse_pressed = False
+        self.offset = QPoint()
+
+    def paint(self, painter):
         colors = [
             "red",
             "blue",
@@ -32,97 +54,41 @@ class RectangleItem(QGraphicsRectItem):
             "white",
         ]
 
-        self.setBrush(QBrush(QColor(random.choice(colors))))
-        self.setFlag(QGraphicsRectItem.ItemIsMovable)
-        self.connections = []
-
-    def itemChange(self, change, value):
-        if change == QGraphicsRectItem.ItemPositionChange:
-            for connection in self.connections:
-                connection.updateLine()
-        return super().itemChange(change, value)
-
-
-class ConnectionItem(QGraphicsRectItem):
-    def __init__(self, start_item, end_item):
-        super().__init__()
-        self.start_item = start_item
-        self.end_item = end_item
-        # pdb.set_trace()
-        self.updateLine()
-
-    def updateLine(self):
-        start_pos = self.start_item.scenePos() + self.start_item.rect().center()
-        end_pos = self.end_item.scenePos() + self.end_item.rect().center()
-
-        line = QLineF(start_pos, end_pos)
-        print("Imma draw a connection line")
-        # self.setLine(line)
-
-
-class Scene(QGraphicsScene):
-    def __init__(self):
-        super().__init__()
-        self.setSceneRect(0, 0, 800, 600)
-        self.rectangles = []
-        self.connections = []
-
-    def mouseDoubleClickEvent(self, event):
-        # Randomly select a color from the list
-        rect_item = RectangleItem()
-        rect_item.setPos(event.scenePos())
-
-        self.addItem(rect_item)
-        self.rectangles.append(rect_item)
+        painter.setBrush(QBrush(QColor(random.choice(colors))))
+        painter.drawRect(self.rect)
 
     def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton:
-            start_item = self.itemAt(event.scenePos(), QTransform())
-            target_item = None
+        if event.button() == Qt.LeftButton and self.rect.contains(event.pos()):
+            self.mouse_pressed = True
+            self.offset = event.pos() - self.rect.topLeft()
 
-            print(f"start item #{start_item}")
+    def handle_collision(self, event):
+            new_pos = event.pos() - self.offset
+            updated_rect = QRect(new_pos, self.rect.size())
+            borders = Scene().rect()
 
-            if isinstance(start_item, RectangleItem):
-                connection_item = ConnectionItem(start_item, start_item)
-                print(f"target_item item #{connection_item}")
-                print(connection_item)
+            if self.rect.top() < borders.top():
+                new_pos.setY(borders.top())
+            if self.rect.bottom() > borders.bottom():
+                new_pos.setY(borders.bottom() - self.rect.height())
+            if self.rect.left() < borders.left():
+                new_pos.setX(borders.left())
+            if self.rect.right() > borders.right():
+                new_pos.setX(borders.right() - self.rect.width())
 
-                self.addItem(connection_item)
-                self.connections.append(connection_item)
-
-        if event.button() == Qt.RightButton:
-            print("Context menu called")
-            # TODO:
-            # - add "Create connection"
-            # - add "Remove connection"
-            # - add "Remove object"
+            self.rect.moveTo(new_pos)
 
     def mouseMoveEvent(self, event):
-        if event.buttons() == Qt.LeftButton:
-            for rect_item in self.rectangles:
-                rect_item.setSelected(False)
-            item = self.itemAt(event.scenePos(), QTransform())
-            if isinstance(item, RectangleItem):
-                item.setSelected(True)
+        if self.mouse_pressed:
+            self.handle_collision(event)
 
-    # OPTIMIZE
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.LeftButton:
-            start_item = self.itemAt(event.scenePos(), QTransform())
-            if isinstance(start_item, RectangleItem):
-                end_item = self.itemAt(event.scenePos(), QTransform())
-                if isinstance(end_item, RectangleItem) and start_item != end_item:
-                    connection_item = ConnectionItem(start_item, end_item)
-                    self.addItem(connection_item)
-                    self.connections.append(connection_item)
+            self.mouse_pressed = False
 
+if __name__ == '__main__':
+    app = QApplication([])
+    rect_array = [QRect(50, 50, 100, 100), QRect(200, 200, 150, 150)]  # Example rectangles
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    scene = Scene()
-    """
-    opens a window with an empty scene on PyQt
-    """
-    view = QGraphicsView(scene)
-    view.show()
-    sys.exit(app.exec())
+    window = Scene()
+    app.exec_()
