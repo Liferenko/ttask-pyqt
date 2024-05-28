@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QApplication, QWidget
 from PyQt5.QtGui import QPainter, QColor, QBrush
 from PyQt5.QtCore import Qt, QRect, QPoint
 
+
 class Scene(QWidget):
     def __init__(self):
         super().__init__()
@@ -33,6 +34,7 @@ class Scene(QWidget):
     def mouseReleaseEvent(self, event):
         for rect_item in self.rect_items:
             rect_item.mouseReleaseEvent(event)
+
 
 class RectangleItem:
     def __init__(self, rect):
@@ -63,20 +65,20 @@ class RectangleItem:
             self.offset = event.pos() - self.rect.topLeft()
 
     def handle_collision(self, event):
-            new_pos = event.pos() - self.offset
-            updated_rect = QRect(new_pos, self.rect.size())
-            borders = Scene().rect()
+        new_pos = event.pos() - self.offset
+        updated_rect = QRect(new_pos, self.rect.size())
+        borders = Scene().rect()
 
-            if self.rect.top() < borders.top():
-                new_pos.setY(borders.top())
-            if self.rect.bottom() > borders.bottom():
-                new_pos.setY(borders.bottom() - self.rect.height())
-            if self.rect.left() < borders.left():
-                new_pos.setX(borders.left())
-            if self.rect.right() > borders.right():
-                new_pos.setX(borders.right() - self.rect.width())
+        if self.rect.top() < borders.top():
+            new_pos.setY(borders.top())
+        if self.rect.bottom() > borders.bottom():
+            new_pos.setY(borders.bottom() - self.rect.height())
+        if self.rect.left() < borders.left():
+            new_pos.setX(borders.left())
+        if self.rect.right() > borders.right():
+            new_pos.setX(borders.right() - self.rect.width())
 
-            self.rect.moveTo(new_pos)
+        self.rect.moveTo(new_pos)
 
     def mouseMoveEvent(self, event):
         if self.mouse_pressed:
@@ -86,9 +88,13 @@ class RectangleItem:
         if event.button() == Qt.LeftButton:
             self.mouse_pressed = False
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app = QApplication([])
-    rect_array = [QRect(50, 50, 100, 100), QRect(200, 200, 150, 150)]  # Example rectangles
+    rect_array = [
+        QRect(50, 50, 100, 100),
+        QRect(200, 200, 150, 150),
+    ]  # Example rectangles
 
     window = Scene()
     app.exec_()
