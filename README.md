@@ -34,21 +34,24 @@
 
 **Definition of done:**
 - [x] The program opens a window with an empty scene on PyQt 
-- [ ] adds rectangles of different colors at the location of a double-click on the scene.
+- [x] adds rectangles of different colors at the location of a double-click on the scene.
 - [ ] Rectangles can be dragged across the scene.
 - [ ] Connections (visually represented by lines) can be created/deleted between rectangles.
 - [ ] Utilize standard PyQt tools like Widget, Brush, Rectangle for implementation.
 
 **Implementation:**
-- [ ] The size of the rectangles is constant (aspect ratio 2:1).
+- [x] The size of the rectangles is constant (aspect ratio 2:1).
 - [x] The color of a newly created rectangle is chosen randomly at the time of its creation.
 - [ ] The method for creating/deleting connections between rectangles is chosen by the developer.
+  - [x] double left click - create a rectangle
+  - [ ] left click on an object - init/finish a connection line
+  - [ ] right click on a connection line - remove the line
 - [ ] Rectangles cannot overlap each other during creation and dragging.
 - [ ] Rectangles cannot go outside the window/scene boundaries during creation and dragging.
 - [ ] All possible collisions must be considered when interacting with rectangles.
 - [ ] For simplicity, a rectangle is not created if the area of the scene where the double-click was made is too small to place the rectangle.
 - [ ] When dragging a rectangle, the connected figures remain in place, created connections are preserved and updated.
-- [ ] A rectangle is created centered at the click point and can be dragged from any point.
+- [x] A rectangle is created centered at the click point and can be dragged from any point.
 - [ ] Use only the PyQt library with standard drawing and widget tools (Widget, Brush, Rectangle, etc.)
 - [ ] * It would be a plus if, when dragging to an occupied space, the rectangle will snap next to the obstacle (stop at the last available position) instead of returning to the previous mouse position.
 
