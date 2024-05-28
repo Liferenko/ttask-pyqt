@@ -74,7 +74,7 @@
   
 - [ ] **Collision Management**
   - [ ] Prevent rectangles from overlapping during creation and dragging.
-  - [ ] Ensure rectangles do not go outside the scene boundaries.
+  - [x] Ensure rectangles do not go outside the scene boundaries.
   - [ ] Check if the area is too small to create a rectangle.
 
 - [ ] **Rectangle Interaction**
