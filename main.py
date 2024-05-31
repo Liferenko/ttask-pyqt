@@ -6,28 +6,30 @@ from PyQt5.QtGui import QPainter, QColor, QBrush, QMouseEvent
 from PyQt5.QtCore import Qt, QRect, QPoint
 
 
+colors = [
+    "red",
+    "blue",
+    "green",
+    "black",
+    "yellow",
+    "orange",
+    "purple",
+    "pink",
+    "brown",
+    "white",
+]
+
+
 class RectangleItem:
     def __init__(self, rect):
         self.rect = rect
         self.mouse_pressed = False
         self.offset = QPoint()
         self.connections = []
+        self.color = random.choice(colors)
 
     def paint(self, painter):
-        colors = [
-            "red",
-            "blue",
-            "green",
-            "black",
-            "yellow",
-            "orange",
-            "purple",
-            "pink",
-            "brown",
-            "white",
-        ]
-
-        painter.setBrush(QBrush(QColor(random.choice(colors))))
+        painter.setBrush(QBrush(QColor(self.color)))
         painter.drawRect(self.rect)
 
     def mousePressEvent(self, event):
