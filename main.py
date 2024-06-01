@@ -1,24 +1,9 @@
 import random
-import datetime
 import pdb
 
-from PyQt5.QtWidgets import QApplication, QWidget, QGraphicsRectItem
+from PyQt5.QtWidgets import QApplication, QWidget
 from PyQt5.QtGui import QPainter, QColor, QBrush, QMouseEvent
 from PyQt5.QtCore import Qt, QRect, QPoint
-from PyQt5.QtGui import QMouseEvent
-
-colors = [
-    "red",
-    "blue",
-    "green",
-    "black",
-    "yellow",
-    "orange",
-    "purple",
-    "pink",
-    "brown",
-    "white",
-]
 
 
 colors = [
@@ -52,23 +37,9 @@ class RectangleItem:
             self.mouse_pressed = True
             self.offset = event.pos() - self.rect.topLeft()
 
-    def handle_collision(self, event: QMouseEvent) -> None:
+    def handle_collision(self, event: QMouseEvent | None) -> None:
         new_pos = event.pos() - self.offset
         updated_rect = QRect(new_pos, self.rect.size())
-
-        # TODO handle obj-to-obj collisions
-        for rect in Scene().rect_items:
-            if rect != self:
-                if updated_rect.intersects(rect.rect):
-                    print(f"#{datetime.datetime.now()} - UNACCEPTABLEEEEEE!!!")
-                    new_pos.setX(max(new_pos.x(), rect.rect.left() - self.rect.width()))
-                    new_pos.setX(min(new_pos.x(), rect.rect.right()))
-
-                    new_pos.setY(max(new_pos.y(), rect.rect.top() - self.rect.height()))
-                    new_pos.setY(min(new_pos.y(), rect.rect.bottom()))
-
-                    print(f"new position - #{new_pos}")
-        # Collisions with Scene boundaries
         borders = Scene().rect()
 
         if updated_rect.top() < borders.top():
@@ -82,11 +53,11 @@ class RectangleItem:
 
         self.rect.moveTo(new_pos)
 
-    def mouseMoveEvent(self, event: QMouseEvent) -> None:
+    def mouseMoveEvent(self, event: QMouseEvent | None) -> None:
         if self.mouse_pressed:
             self.handle_collision(event)
 
-    def mouseReleaseEvent(self, event: QMouseEvent) -> None:
+    def mouseReleaseEvent(self, event: QMouseEvent | None) -> None:
         if event.button() == Qt.LeftButton:
             self.mouse_pressed = False
 
@@ -99,11 +70,11 @@ class Scene(QWidget):
         self.setMouseTracking(True)
         self.show()
 
-    # def paintEvent(self, event: QMouseEvent) -> None:
-    #     painter = QPainter(self)
-    #     painter.setRenderHint(QPainter.Antialiasing)
-    #     for rect_item in self.rect_items:
-    #         rect_item.paint(painter)
+    def paintEvent(self, event: QMouseEvent | None) -> None:
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+        for rect_item in self.rect_items:
+            rect_item.paint(painter)
 
     def mouseDoubleClickEvent(self, event):
         rect = QRect(event.pos().x() - 100, event.pos().y() - 50, 200, 100)
@@ -112,26 +83,15 @@ class Scene(QWidget):
 
     def mousePressEvent(self, event: QMouseEvent | None) -> None:
         for rect_item in self.rect_items:
-            if rect_item.contains(event.pos()):
+            if rect_item.rect.contains(event.pos()):
                 rect_item.mousePressEvent(event)
 
-    def mouseDoubleClickEvent(self, event: QMouseEvent) -> None:
-        new_rect_item = RectangleItem()
-        new_rect_item.setPos(event.screenPos())
-
-        print(self.rect_items)
-        # self.addItem(rect_item)
-        self.rect_items.append(new_rect_item)
-
-        # return super().mouseDoubleClickEvent(event)
-        print("Sup doubleclick")
-
-    def mouseMoveEvent(self, event: QMouseEvent) -> None:
+    def mouseMoveEvent(self, event: QMouseEvent | None) -> None:
         for rect_item in self.rect_items:
             rect_item.mouseMoveEvent(event)
         self.update()
 
-    def mouseReleaseEvent(self, event: QMouseEvent) -> None:
+    def mouseReleaseEvent(self, event: QMouseEvent | None) -> None:
         for rect_item in self.rect_items:
             rect_item.mouseReleaseEvent(event)
 
