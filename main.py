@@ -32,7 +32,7 @@ class RectangleItem:
         painter.setBrush(QBrush(QColor(self.color)))
         painter.drawRect(self.rect)
 
-    def mousePressEvent(self, event):
+    def mousePressEvent(self, event: QMouseEvent | None):
         if event.button() == Qt.LeftButton and self.rect.contains(event.pos()):
             self.mouse_pressed = True
             self.offset = event.pos() - self.rect.topLeft()
@@ -65,8 +65,7 @@ class RectangleItem:
 class Scene(QWidget):
     def __init__(self):
         super().__init__()
-        # TODO Create rectangles by click
-        self.rect_items = [RectangleItem(rect) for rect in rect_array]
+        self.rect_items = []
         self.setFixedSize(800, 500)
         self.setMouseTracking(True)
         self.show()
@@ -76,6 +75,11 @@ class Scene(QWidget):
         painter.setRenderHint(QPainter.Antialiasing)
         for rect_item in self.rect_items:
             rect_item.paint(painter)
+
+    def mouseDoubleClickEvent(self, event):
+        rect = QRect(event.pos().x() - 100, event.pos().y() - 50, 200, 100)
+        self.rect_items.append(RectangleItem(rect))
+        self.update()
 
     def mousePressEvent(self, event: QMouseEvent | None) -> None:
         for rect_item in self.rect_items:
@@ -94,10 +98,6 @@ class Scene(QWidget):
 
 if __name__ == "__main__":
     app = QApplication([])
-    rect_array = [
-        QRect(50, 50, 100, 100),
-        QRect(200, 200, 150, 150),
-    ]
-
     window = Scene()
+
     app.exec_()
