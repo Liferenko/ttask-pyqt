@@ -21,22 +21,34 @@ colors = [
 ]
 
 
-class RectangleItem(QGraphicsRectItem):
-    def __init__(self):
-        super().__init__()
-        self.setRect(0, 0, 200, 100)
-        self.setBrush(QBrush(QColor(random.choice(colors))))
+colors = [
+    "red",
+    "blue",
+    "green",
+    "black",
+    "yellow",
+    "orange",
+    "purple",
+    "pink",
+    "brown",
+    "white",
+]
+
+
+class RectangleItem:
+    def __init__(self, rect):
+        self.rect = rect
         self.mouse_pressed = False
         self.offset = QPoint()
         self.connections = []
+        self.color = random.choice(colors)
 
-    # def paint(self, painter):
-    #
-    #     painter.setBrush(QBrush(QColor(random.choice(colors))))
-    #     painter.drawRect(self.rect)
+    def paint(self, painter):
+        painter.setBrush(QBrush(QColor(self.color)))
+        painter.drawRect(self.rect)
 
-    def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton and self.contains(event.pos()):
+    def mousePressEvent(self, event: QMouseEvent | None):
+        if event.button() == Qt.LeftButton and self.rect.contains(event.pos()):
             self.mouse_pressed = True
             self.offset = event.pos() - self.rect.topLeft()
 
@@ -82,7 +94,6 @@ class RectangleItem(QGraphicsRectItem):
 class Scene(QWidget):
     def __init__(self):
         super().__init__()
-        # TODO Create rectangles by click
         self.rect_items = []
         self.setFixedSize(800, 500)
         self.setMouseTracking(True)
@@ -94,7 +105,12 @@ class Scene(QWidget):
     #     for rect_item in self.rect_items:
     #         rect_item.paint(painter)
 
-    def mousePressEvent(self, event: QMouseEvent) -> None:
+    def mouseDoubleClickEvent(self, event):
+        rect = QRect(event.pos().x() - 100, event.pos().y() - 50, 200, 100)
+        self.rect_items.append(RectangleItem(rect))
+        self.update()
+
+    def mousePressEvent(self, event: QMouseEvent | None) -> None:
         for rect_item in self.rect_items:
             if rect_item.contains(event.pos()):
                 rect_item.mousePressEvent(event)
@@ -122,12 +138,6 @@ class Scene(QWidget):
 
 if __name__ == "__main__":
     app = QApplication([])
-
-    # TODO REMOVE BEFORE FLIGHT!!!!!!
-    # rect_array = [
-    #     QRect(50, 50, 100, 100),
-    #     QRect(200, 200, 150, 150),
-    # ]
-
     window = Scene()
+
     app.exec_()
