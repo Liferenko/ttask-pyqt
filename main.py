@@ -1,7 +1,7 @@
 import random
 import pdb
 
-from PyQt5.QtWidgets import QApplication, QWidget, QGraphicsLineItem, QGraphicsItem
+from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QGraphicsLineItem, QGraphicsItem
 from PyQt5.QtGui import QPainter, QColor, QBrush, QMouseEvent, QPen
 from PyQt5.QtCore import Qt, QRect, QPoint
 
@@ -32,24 +32,21 @@ class RectangleItem:
         self.offset = QPoint()
         self.connections = []
         self.color = random.choice(colors)
-        self.connection_line = None
+        self.connection_lines = []
 
     def paint(self, painter):
         painter.setBrush(QBrush(QColor(self.color)))
         painter.drawRect(self.rect)
 
-    def mousePressEvent(self, event: QMouseEvent | None):
-        if event.modifiers() == Qt.ShiftModifier and event.button() == Qt.LeftButton:
-            print("Creating connection line")
-            self.connection_line = ConnectionLine(self.rect.center(), event.pos())
-            Scene().add_connection_line(self.connection_line)
-
-        if event.button() == Qt.LeftButton and self.rect.contains(event.pos()):
-            self.mouse_pressed = True
-            self.offset = event.pos() - self.rect.topLeft()
+    def can_object_be_created_here(target_rect) -> bool:
+        # Object can't be created if the new object intersects with any other object
+        for rect_item in Scene().rect_items:
+            if rect_item.rect.intersects(target_rect):
+                return True
+        return False
 
     def handle_collision_with_rect(self, rect):
-        # TODO - resolve the issue
+        # Check for collisions with other rectangles
         for rect_item in Scene().rect_items:
             if rect_item.rect != rect and rect_item.rect.intersects(rect):
                 print("Collision detected")
@@ -72,6 +69,29 @@ class RectangleItem:
             new_pos.setX(borders.right() - self.rect.width())
         self.rect.moveTo(new_pos)
 
+    def mousePressEvent(self, event: QMouseEvent | None):
+        match event.button():
+            case Qt.LeftButton:
+                self.mouse_pressed = True
+                self.offset = event.pos() - self.rect.topLeft()
+
+            case Qt.RightButton:
+                print("Right button clicked!")
+
+    def can_object_be_created_here(target_rect) -> bool:
+        # Object can't be created if the new object intersects with any other object
+        for rect_item in Scene().rect_items:
+            if rect_item.rect.intersects(target_rect):
+                return False
+        return True
+
+    def mouseDoubleClickEvent(self, event):
+        rect = QRect(event.pos().x() - 100, event.pos().y() - 50, 200, 100)
+
+        if self.can_object_be_created_here(rect):
+            self.rect_items.append(RectangleItem(rect))
+            self.update()
+
     def mouseMoveEvent(self, event: QMouseEvent | None) -> None:
         if self.mouse_pressed:
             self.handle_collision_with_borders(event)
@@ -88,9 +108,6 @@ class ConnectionLine(QGraphicsLineItem):
         self.setPen(QPen(Qt.black, 2))
 
 
-
-
-
 class Scene(QWidget):
     def __init__(self):
         super().__init__()
@@ -103,12 +120,16 @@ class Scene(QWidget):
     def paintEvent(self, event: QMouseEvent | None) -> None:
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
+        
+        # Draw object
         for rect_item in self.rect_items:
             rect_item.paint(painter)
+
+        # Draw connection lines
         for connection_line in self.connection_lines:
             painter.drawLine(connection_line.line())
-        
-        # instruction text
+
+        # Draw instructions
         font = painter.font()
         font.setPointSizeF(font.pointSizeF() * 0.8)
         painter.setOpacity(0.7)
@@ -136,6 +157,19 @@ class Scene(QWidget):
         for rect_item in self.rect_items:
             rect_item.mouseReleaseEvent(event)
 
+    def connect_objects(self, object_a, object_b):
+        connection_line = ConnectionLine(object_a.rect.center(), object_b.rect.center())
+        self.add_connection_line(connection_line)
+
+    def contextMenuEvent(self, event):
+        menu = QMenu(self)
+        menu.addAction("Connect nearest object with connection line", lambda: self.connect_objects(self.rect_items[0], self.rect_items[1])) 
+        menu.addAction("Option 2")
+        menu.addAction("Option 3")
+        action = menu.exec_(event.globalPos())
+        if action:
+            print(f"Selected option: {action.text()}")
+
     def add_connection_line(self, connection_line):
         self.connection_lines.append(connection_line)
         self.update()
@@ -143,6 +177,7 @@ class Scene(QWidget):
     def remove_connection_line(self, connection_line):
         self.connection_lines.remove(connection_line)
         self.update()
+
 
 if __name__ == "__main__":
     app = QApplication([])
