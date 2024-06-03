@@ -52,13 +52,11 @@ class RectangleItem:
                 return True
         return False
 
-    def handle_collision_with_rect(self, rect):
-        # Check for collisions with other rectangles
+    def handle_collision_with_rectangles(self):
         for rect_item in Scene().rect_items:
-            if rect_item.rect != rect and rect_item.rect.intersects(rect):
-                print("Collision detected")
-                return True
-        return False
+            if rect_item.rect != self.rect and rect_item.rect.intersects(self.rect):
+                self.color = rect_item.color
+                break
 
     def handle_collision_with_borders(self, event: QMouseEvent | None) -> None:
         new_pos = event.pos() - self.offset
@@ -102,7 +100,7 @@ class RectangleItem:
     def mouseMoveEvent(self, event: QMouseEvent | None) -> None:
         if self.mouse_pressed:
             self.handle_collision_with_borders(event)
-            self.handle_collision_with_rect(self.rect)
+            self.handle_collision_with_rectangles()
 
     def mouseReleaseEvent(self, event: QMouseEvent | None) -> None:
         if event.button() == Qt.LeftButton:
@@ -178,26 +176,25 @@ class Scene(QWidget):
             if line.contains(object_a.rect.center()) and line.contains(
                 object_b.rect.center()
             ):
-                print("Connection line already exists between the objects")
+                print("Connection line exists")
                 return
 
         # Create a new connection line
         connection_line = ConnectionLine(object_a.rect.center(), object_b.rect.center())
         self.add_connection_line(connection_line)
-        connection_line = ConnectionLine(object_a.rect.center(), object_b.rect.center())
-        self.add_connection_line(connection_line)
 
     def contextMenuEvent(self, event):
         menu = QMenu(self)
+
         menu.addAction(
             "Connect nearest object with connection line",
-            lambda: self.connect_objects(self.rect_items[0], self.rect_items[1]),
+            lambda: self.connect_objects(self.rect_items[0], self.rect_items[1])
         )
         menu.addAction(
             "Remove connection line",
-            lambda: self.remove_connection_line(self.connection_lines[0]),
+            lambda: self.remove_connection_line(self.connection_lines[0])
         )
-        menu.addAction("Option 3")
+
         action = menu.exec_(event.globalPos())
         if action:
             print(f"Selected option: {action.text()}")
