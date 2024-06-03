@@ -27,7 +27,7 @@ colors = [
 
 instructions = [
     "Double-click to create a rectangle",
-    "Shift+click to create a connection",
+    "Right click -> context menu -> create/remove connection line",
     "Cmd+Q to quit",
 ]
 
@@ -139,9 +139,9 @@ class Scene(QWidget):
         font.setPointSizeF(font.pointSizeF() * 0.8)
         painter.setOpacity(0.7)
         painter.setFont(font)
-        painter.drawText(self.width() - 200, 20, instructions[0])
-        painter.drawText(self.width() - 200, 35, instructions[1])
-        painter.drawText(self.width() - 200, 50, instructions[2])
+        painter.drawText(self.width() - 300, 40, instructions[0])
+        painter.drawText(self.width() - 300, 55, instructions[1])
+        painter.drawText(self.width() - 300, 70, instructions[2])
 
     def mouseDoubleClickEvent(self, event):
         rect = QRect(event.pos().x() - 100, event.pos().y() - 50, 200, 100)
