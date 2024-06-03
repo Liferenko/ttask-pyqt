@@ -158,6 +158,15 @@ class Scene(QWidget):
     def mouseMoveEvent(self, event: QMouseEvent | None) -> None:
         for rect_item in self.rect_items:
             rect_item.mouseMoveEvent(event)
+
+        for connection_line in self.connection_lines:
+            connection_line.setLine(
+                connection_line.line().x1(),
+                connection_line.line().y1(),
+                event.pos().x(),
+                event.pos().y(),
+            )
+
         self.update()
 
     def mouseReleaseEvent(self, event: QMouseEvent | None) -> None:
@@ -165,12 +174,13 @@ class Scene(QWidget):
             rect_item.mouseReleaseEvent(event)
 
     def connect_objects(self, object_a, object_b):
-        # Check if a connection line already exists between the objects
         for line in self.connection_lines:
-            if line.contains(object_a.rect.center()) and line.contains(object_b.rect.center()):
+            if line.contains(object_a.rect.center()) and line.contains(
+                object_b.rect.center()
+            ):
                 print("Connection line already exists between the objects")
                 return
-        
+
         # Create a new connection line
         connection_line = ConnectionLine(object_a.rect.center(), object_b.rect.center())
         self.add_connection_line(connection_line)
@@ -185,7 +195,7 @@ class Scene(QWidget):
         )
         menu.addAction(
             "Remove connection line",
-            lambda: self.remove_connection_line(self.connection_lines[0])
+            lambda: self.remove_connection_line(self.connection_lines[0]),
         )
         menu.addAction("Option 3")
         action = menu.exec_(event.globalPos())
