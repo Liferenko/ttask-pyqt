@@ -1,7 +1,13 @@
 import random
 import pdb
 
-from PyQt5.QtWidgets import QApplication, QWidget, QMenu, QGraphicsLineItem, QGraphicsItem
+from PyQt5.QtWidgets import (
+    QApplication,
+    QWidget,
+    QMenu,
+    QGraphicsLineItem,
+    QGraphicsItem,
+)
 from PyQt5.QtGui import QPainter, QColor, QBrush, QMouseEvent, QPen
 from PyQt5.QtCore import Qt, QRect, QPoint
 
@@ -24,6 +30,7 @@ instructions = [
     "Shift+click to create a connection",
     "Cmd+Q to quit",
 ]
+
 
 class RectangleItem:
     def __init__(self, rect):
@@ -120,7 +127,7 @@ class Scene(QWidget):
     def paintEvent(self, event: QMouseEvent | None) -> None:
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
-        
+
         # Draw object
         for rect_item in self.rect_items:
             rect_item.paint(painter)
@@ -158,13 +165,28 @@ class Scene(QWidget):
             rect_item.mouseReleaseEvent(event)
 
     def connect_objects(self, object_a, object_b):
+        # Check if a connection line already exists between the objects
+        for line in self.connection_lines:
+            if line.contains(object_a.rect.center()) and line.contains(object_b.rect.center()):
+                print("Connection line already exists between the objects")
+                return
+        
+        # Create a new connection line
+        connection_line = ConnectionLine(object_a.rect.center(), object_b.rect.center())
+        self.add_connection_line(connection_line)
         connection_line = ConnectionLine(object_a.rect.center(), object_b.rect.center())
         self.add_connection_line(connection_line)
 
     def contextMenuEvent(self, event):
         menu = QMenu(self)
-        menu.addAction("Connect nearest object with connection line", lambda: self.connect_objects(self.rect_items[0], self.rect_items[1])) 
-        menu.addAction("Option 2")
+        menu.addAction(
+            "Connect nearest object with connection line",
+            lambda: self.connect_objects(self.rect_items[0], self.rect_items[1]),
+        )
+        menu.addAction(
+            "Remove connection line",
+            lambda: self.remove_connection_line(self.connection_lines[0])
+        )
         menu.addAction("Option 3")
         action = menu.exec_(event.globalPos())
         if action:
@@ -175,8 +197,9 @@ class Scene(QWidget):
         self.update()
 
     def remove_connection_line(self, connection_line):
-        self.connection_lines.remove(connection_line)
-        self.update()
+        if connection_line in self.connection_lines:
+            self.connection_lines.remove(connection_line)
+            self.update()
 
 
 if __name__ == "__main__":
