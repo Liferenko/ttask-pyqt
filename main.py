@@ -188,11 +188,11 @@ class Scene(QWidget):
 
         menu.addAction(
             "Connect nearest object with connection line",
-            lambda: self.connect_objects(self.rect_items[0], self.rect_items[1])
+            lambda: self.connect_objects(self.rect_items[0], self.rect_items[1]),
         )
         menu.addAction(
             "Remove connection line",
-            lambda: self.remove_connection_line(self.connection_lines[0])
+            lambda: self.remove_connection_line(self.connection_lines[0]),
         )
 
         action = menu.exec_(event.globalPos())
