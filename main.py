@@ -45,8 +45,7 @@ class RectangleItem:
 
     def handle_collision_with_rectangles(self):
         for rect_item in Scene().rect_items:
-            if (rect_item.rect != self.rect and
-                    rect_item.rect.intersects(self.rect)):
+            if rect_item.rect != self.rect and rect_item.rect.intersects(self.rect):
                 self.color = rect_item.color
                 break
 
@@ -84,9 +83,7 @@ class RectangleItem:
         return True
 
     def mouseDoubleClickEvent(self, event):
-        rect = QRect(
-            event.pos().x() - 100, event.pos().y() - 50, 200, 100
-            )
+        rect = QRect(event.pos().x() - 100, event.pos().y() - 50, 200, 100)
 
         if self.can_object_be_created_here(rect):
             self.rect_items.append(RectangleItem(rect))
@@ -104,10 +101,7 @@ class RectangleItem:
 
 class ConnectionLine(QGraphicsLineItem):
     def __init__(self, start_pos, end_pos):
-        super().__init__(
-            start_pos.x(), start_pos.y(),
-            end_pos.x(), end_pos.y()
-            )
+        super().__init__(start_pos.x(), start_pos.y(), end_pos.x(), end_pos.y())
         self.setPen(QPen(Qt.black, 2))
 
 
@@ -178,10 +172,7 @@ class Scene(QWidget):
                 return
 
         # Create a new connection line
-        connection_line = ConnectionLine(
-            object_a.rect.center(),
-            object_b.rect.center()
-        )
+        connection_line = ConnectionLine(object_a.rect.center(), object_b.rect.center())
         self.add_connection_line(connection_line)
 
     def get_object_under_cursor(self, cursor_pos):
@@ -196,8 +187,8 @@ class Scene(QWidget):
         menu.addAction(
             "Create connection line",
             lambda: self.connect_objects(
-            self.get_object_under_cursor(event.pos()),
-            self.rect_items[0], # FIXIT
+                self.get_object_under_cursor(event.pos()),
+                self.rect_items[0],  # FIXIT
             ),
         )
         menu.addAction(
