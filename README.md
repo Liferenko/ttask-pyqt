@@ -27,7 +27,7 @@
 
 -->
 ### Demo
-[![Watch on Youtube](https://github.com/Liferenko/ttask-pyqt/blob/a2f5b64010eaa5dc77e1c6e06d8d38a4526e39a1/demo_thumbnail.png)]([https://youtu.be/vt5fpE0bzSY](https://www.youtube.com/watch?v=unfWRnmGUp4))
+[![Watch on Youtube](https://github.com/Liferenko/ttask-pyqt/blob/a2f5b64010eaa5dc77e1c6e06d8d38a4526e39a1/demo_thumbnail.png)](https://www.youtube.com/watch?v=unfWRnmGUp4)
 
 [Download demo](https://github.com/Liferenko/ttask-pyqt/blob/8ba1a798795df78240f14ba31abf9f3de59c2cde/demo%20pyqt5%20test%20task%202024-06-04.mp4)
 
