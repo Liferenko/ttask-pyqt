@@ -1,12 +1,10 @@
 import random
-import pdb
 
 from PyQt5.QtWidgets import (
     QApplication,
     QWidget,
     QMenu,
     QGraphicsLineItem,
-    QGraphicsItem,
 )
 from PyQt5.QtGui import QPainter, QColor, QBrush, QMouseEvent, QPen
 from PyQt5.QtCore import Qt, QRect, QPoint
@@ -45,16 +43,10 @@ class RectangleItem:
         painter.setBrush(QBrush(QColor(self.color)))
         painter.drawRect(self.rect)
 
-    def can_object_be_created_here(target_rect) -> bool:
-        # Object can't be created if the new object intersects with any other object
-        for rect_item in Scene().rect_items:
-            if rect_item.rect.intersects(target_rect):
-                return True
-        return False
-
     def handle_collision_with_rectangles(self):
         for rect_item in Scene().rect_items:
-            if rect_item.rect != self.rect and rect_item.rect.intersects(self.rect):
+            if (rect_item.rect != self.rect and
+                    rect_item.rect.intersects(self.rect)):
                 self.color = rect_item.color
                 break
 
@@ -84,14 +76,17 @@ class RectangleItem:
                 print("Right button clicked!")
 
     def can_object_be_created_here(target_rect) -> bool:
-        # Object can't be created if the new object intersects with any other object
+        # Object can't be created if the new object
+        # intersects with any other object
         for rect_item in Scene().rect_items:
             if rect_item.rect.intersects(target_rect):
                 return False
         return True
 
     def mouseDoubleClickEvent(self, event):
-        rect = QRect(event.pos().x() - 100, event.pos().y() - 50, 200, 100)
+        rect = QRect(
+            event.pos().x() - 100, event.pos().y() - 50, 200, 100
+            )
 
         if self.can_object_be_created_here(rect):
             self.rect_items.append(RectangleItem(rect))
@@ -109,7 +104,10 @@ class RectangleItem:
 
 class ConnectionLine(QGraphicsLineItem):
     def __init__(self, start_pos, end_pos):
-        super().__init__(start_pos.x(), start_pos.y(), end_pos.x(), end_pos.y())
+        super().__init__(
+            start_pos.x(), start_pos.y(),
+            end_pos.x(), end_pos.y()
+            )
         self.setPen(QPen(Qt.black, 2))
 
 
@@ -180,15 +178,27 @@ class Scene(QWidget):
                 return
 
         # Create a new connection line
-        connection_line = ConnectionLine(object_a.rect.center(), object_b.rect.center())
+        connection_line = ConnectionLine(
+            object_a.rect.center(),
+            object_b.rect.center()
+        )
         self.add_connection_line(connection_line)
+
+    def get_object_under_cursor(self, cursor_pos):
+        for rect_item in self.rect_items:
+            if rect_item.rect.contains(cursor_pos):
+                return rect_item
+        return None
 
     def contextMenuEvent(self, event):
         menu = QMenu(self)
 
         menu.addAction(
-            "Connect nearest object with connection line",
-            lambda: self.connect_objects(self.rect_items[0], self.rect_items[1]),
+            "Create connection line",
+            lambda: self.connect_objects(
+            self.get_object_under_cursor(event.pos()),
+            self.rect_items[0], # FIXIT
+            ),
         )
         menu.addAction(
             "Remove connection line",

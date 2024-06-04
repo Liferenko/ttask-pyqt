@@ -44,8 +44,8 @@
 - [x] The color of a newly created rectangle is chosen randomly at the time of its creation.
 - [ ] The method for creating/deleting connections between rectangles is chosen by the developer.
   - [x] double left click - create a rectangle
-  - [ ] left click on an object - init/finish a connection line
-  - [ ] right click on a connection line - remove the line
+  - [x] context menu -> init/finish a connection line
+  - [x] context menu -> remove the line
 - [ ] Rectangles cannot overlap each other during creation and dragging.
 - [x] Rectangles cannot go outside the window/scene boundaries during creation and dragging.
 - [ ] All possible collisions must be considered when interacting with rectangles.
@@ -54,4 +54,3 @@
 - [x] A rectangle is created centered at the click point and can be dragged from any point.
 - [x] Use only the PyQt library with standard drawing and widget tools (Widget, Brush, Rectangle, etc.)
 - [ ] * It would be a plus if, when dragging to an occupied space, the rectangle will snap next to the obstacle (stop at the last available position) instead of returning to the previous mouse position.
-
