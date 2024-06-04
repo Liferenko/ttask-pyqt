@@ -26,6 +26,11 @@
 - * Будет плюсом, если при перетаскивании на занятое место прямоугольник будет вставать вплотную к препятствию (упираться в коллизию  на последнем доступном месте), а не возвращаться на прежнюю позицию мыши.
 
 -->
+### Demo
+
+[Watch on Youtube](https://www.youtube.com/watch?v=unfWRnmGUp4)
+
+
 
 **Criteria:** Correct functionality (correct implementation of the task), architecture, proper comments.
 **Approximate time:** 2-6 hours.
