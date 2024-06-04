@@ -104,6 +104,20 @@ class ConnectionLine(QGraphicsLineItem):
         super().__init__(start_pos.x(), start_pos.y(), end_pos.x(), end_pos.y())
         self.setPen(QPen(Qt.black, 2))
 
+    def mousePressEvent(self, event: QMouseEvent | None) -> None:
+        match event.button():
+            case Qt.LeftButton:
+                self.mouse_pressed = True
+                self.offset = event.pos() - self.rect.topLeft()
+
+            case Qt.RightButton:
+                print("Right button clicked!")
+                # Update end position
+                object_under_cursor = Scene().get_object_under_cursor(event.pos())
+
+                if object_under_cursor:
+                    self.connection_line_end_pos = object_under_cursor.rect.center()
+
 
 class Scene(QWidget):
     def __init__(self):
